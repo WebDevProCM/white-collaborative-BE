@@ -1,8 +1,11 @@
-import express, { ErrorRequestHandler, NextFunction, Request, Response } from "express"
+import 'dotenv/config'
+import express, { NextFunction, Request, Response } from "express"
 import http from "http"
 import { Server } from "socket.io";
 import cors from "cors"
 import { CustomError } from "./types/error";
+import { initialiseBoard, initialiseUser } from "./models/tables";
+import connection from "./db/db";
 
 const app = express();
 const server = http.createServer(app);
@@ -11,6 +14,10 @@ const io = new Server(server);
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
 app.use(cors());
+
+initialiseUser();
+initialiseBoard();
+
 
 app.get("/", (req: Request, res: Response) =>{
     console.log("Running api");
