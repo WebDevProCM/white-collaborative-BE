@@ -6,6 +6,7 @@ import cors from "cors"
 import { CustomError } from "./types/error";
 import { initialiseBoard, initialiseUser } from "./models/tables";
 import connection from "./db/db";
+import { userRouter } from './routers/usersRouter';
 
 const app = express();
 const server = http.createServer(app);
@@ -14,6 +15,8 @@ const io = new Server(server);
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
 app.use(cors());
+
+app.use(userRouter);
 
 initialiseUser();
 initialiseBoard();
