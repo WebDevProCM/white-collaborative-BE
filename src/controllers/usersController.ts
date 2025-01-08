@@ -19,24 +19,6 @@ const cookieOptions = {
     secure: process.env.NODE_ENV === "production"
 }
 
-export const createUser = catchAsync(async (req: Request<{},{},registerUser>, res: Response, next: NextFunction)=>{
-    if(!Validator.isEmail(req.body.email)){
-        next(new AppError(400, "Invalid email address!"));
-    }
-    if(!req.body.password){
-        next(new AppError(400, "Please provide a password!"));
-    }
-
-    const hashedPassword = await bcrypt.hash(req.body.password, 8);
-
-    const query = `INSERT INTO users (username, email, password) VALUES(?, ?, ?)`;
-    const values = [req.body.username, req.body.email, hashedPassword];
-    const result = await connection.execute(query, values);
-
-    const token = await createToken({username: req.body.username, email: req.body.email, role: "user"});
-    res.cookie("accessToken", token, cookieOptions);
-    res.status(201).send("User created");
-})
 
 export const loginUser =  catchAsync(async (req: Request<{},{}, userLogin>, res: Response, next: NextFunction) =>{
     if(req.body.password.length < 8){
@@ -71,4 +53,28 @@ export const loginUser =  catchAsync(async (req: Request<{},{}, userLogin>, res:
 export const logoutUser =  catchAsync(async (req: Request, res: Response, next: NextFunction) =>{
     res.cookie("accessToken", "", {maxAge: 1});
     res.status(200).send("Logout Successfully!")
+})
+
+export const createUser = catchAsync(async (req: Request<{},{},registerUser>, res: Response, next: NextFunction)=>{
+    if(!Validator.isEmail(req.body.email)){
+        next(new AppError(400, "Invalid email address!"));
+    }
+    if(!req.body.password){
+        next(new AppError(400, "Please provide a password!"));
+    }
+
+    const hashedPassword = await bcrypt.hash(req.body.password, 8);
+
+    const query = `INSERT INTO users (username, email, password) VALUES(?, ?, ?)`;
+    const values = [req.body.username, req.body.email, hashedPassword];
+    const result = await connection.execute(query, values);
+
+    const token = await createToken({username: req.body.username, email: req.body.email, role: "user"});
+    res.cookie("accessToken", token, cookieOptions);
+    res.status(201).send("User created");
+})
+
+export const updateUser = catchAsync(async (req: Request, res: Response, next: NextFunction) =>{
+    const userDetails = req.body;
+    res.status(200).send("Update user")
 })
