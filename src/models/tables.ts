@@ -23,7 +23,7 @@ export const initialiseBoard = async () =>{
       CREATE TABLE IF NOT EXISTS whiteboard(
         id INT AUTO_INCREMENT PRIMARY KEY,
         title VARCHAR(50) NOT NULL,
-        permissions JSON NOT NULL,
+        permissions VARCHAR(255) NOT NULL,
         content TEXT,
         owner_id INT NOT NULL,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,

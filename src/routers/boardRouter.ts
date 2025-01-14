@@ -9,6 +9,6 @@ boardRouter.post("/api/board", authMiddleware, createBoard);
 
 boardRouter.get("/api/board", authMiddleware, readBoard);
 
-boardRouter.patch("/api/board", authMiddleware, updateBoard);
+boardRouter.patch("/api/board/:id", authMiddleware, updateBoard);
 
-boardRouter.delete("/api/board", authMiddleware, deleteBoard);
+boardRouter.delete("/api/board/:id", authMiddleware, deleteBoard);
