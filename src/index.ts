@@ -42,6 +42,9 @@ io.on("connection", (socket) =>{
 app.use((err: CustomError, req: Request, res: Response, next: NextFunction) =>{
     err.statusCode = err.statusCode ? err.statusCode : 500;
     err.message = err.message ? err.message : "Something went wrong in server side!"
+    if(err.message.includes("errors")){
+        err.message = JSON.parse(err.message);
+    }
 
     res.status(err.statusCode).send({
         status: err.statusCode,

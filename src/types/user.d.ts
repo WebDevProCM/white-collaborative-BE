@@ -1,17 +1,21 @@
 export interface registerUser{
-    username: string
-    email: string
+    username: string,
+    email: string,
     password: string
 }
 
 export interface userLogin{
-    email: string
+    email: string,
     password: string
 }
 
 export interface userToken{
-    id: number
-    username: string
-    email: string
+    id: number,
+    username: string,
+    email: string,
     role?: string
+}
+
+export interface userUpdate{
+    username: string
 }

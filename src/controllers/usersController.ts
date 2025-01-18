@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response, Router } from "express";
 import { catchAsync } from "../utilis/asyncErrorHandler";
-import { registerUser, userLogin } from "../types/user";
+import { registerUser, userLogin, userToken, userUpdate } from "../types/user";
 import Validator from 'validator';
 import bcrypt from "bcrypt";
 import { AppError } from "../utilis/errorHandler";
@@ -19,6 +19,10 @@ const cookieOptions = {
     secure: process.env.NODE_ENV === "production"
 }
 
+interface CustomRequest extends Request{
+    user?: userToken,
+    body: userUpdate
+}
 
 export const loginUser =  catchAsync(async (req: Request<{},{}, userLogin>, res: Response, next: NextFunction) =>{
     if(req.body.password.length < 8){
@@ -74,7 +78,12 @@ export const createUser = catchAsync(async (req: Request<{},{},registerUser>, re
     res.status(201).send("User created");
 })
 
-export const updateUser = catchAsync(async (req: Request, res: Response, next: NextFunction) =>{
-    const userDetails = req.body;
-    res.status(200).send("Update user")
+export const updateUser = catchAsync(async (req: CustomRequest, res: Response, next: NextFunction) =>{
+    const userDetails = req.body.username;
+    const query = `UPDATE users SET username = ? WHERE id = ?`;
+    const result = await connection.execute(query, [userDetails, req.user!.id]);
+    const updatedDetails = {id: req.user!.id, username: userDetails, email: req.user!.email}
+    const token = await createToken(updatedDetails);
+    res.cookie("accessToken", token, cookieOptions);
+    res.status(200).send(updatedDetails);
 })
