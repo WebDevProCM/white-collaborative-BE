@@ -9,6 +9,9 @@ import { initialiseBoard, initialiseUser } from "./models/tables";
 import connection from "./db/db";
 import { userRouter } from './routers/usersRouter';
 import { boardRouter } from './routers/boardRouter';
+import { createHandler } from "graphql-http/lib/use/express";
+import { graphqlSchema } from './graphql/schemas';
+import { resolvers } from './graphql/resolvers';
 
 const app = express();
 const server = http.createServer(app);
@@ -38,6 +41,11 @@ io.on("connection", (socket) =>{
         console.log("user disconnected")
     })
 })
+
+app.use("/graphql", createHandler({
+    schema: graphqlSchema,
+    rootValue: resolvers,
+}))
 
 app.use((err: CustomError, req: Request, res: Response, next: NextFunction) =>{
     err.statusCode = err.statusCode ? err.statusCode : 500;
